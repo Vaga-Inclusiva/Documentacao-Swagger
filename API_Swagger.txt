@@ -1,0 +1,430 @@
+swagger: '2.0'
+info:
+  title: VagaInclusiva-API
+  description: API da aplicação VagaInclusiva
+  termsOfService: https://www.example.com/terms/
+  contact:
+    email: contact@example.com
+  license:
+    name: MIT License
+  version: v1
+host: 127.0.0.1:8000
+schemes:
+  - http
+basePath: /
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+  - Basic: []
+paths:
+  /auth/login/:
+    post:
+      operationId: auth_login_create
+      description: |-
+        Check the credentials and return the REST Token
+        if the credentials are valid and authenticated.
+        Calls Django Auth login method to register User ID
+        in Django session framework
+
+        Accept the following POST parameters: username, password
+        Return the REST Framework Token Object's key.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Login'
+      responses:
+        '201':
+          description: 'User created successfully'
+          schema:
+            $ref: '#/definitions/Login'
+      tags:
+        - auth
+    parameters: []
+  /auth/logout/:
+    get:
+      operationId: auth_logout_list
+      description: Accepts/Returns nothing.
+      parameters: []
+      responses:
+        '200':
+          description: 'User logged out successfully'
+      tags:
+        - auth
+    post:
+      operationId: auth_logout_create
+      description: Accepts/Returns nothing.
+      parameters: []
+      responses:
+        '201':
+          description: 'User logged out successfully'
+      tags:
+        - auth
+    parameters: []
+  /auth/password/change/:
+    post:
+      operationId: auth_password_change_create
+      description: |-
+        Accepts the following POST parameters: new_password1, new_password2
+        Returns the success/fail message.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PasswordChange'
+      responses:
+        '201':
+          description: 'Password changed successfully'
+          schema:
+            $ref: '#/definitions/PasswordChange'
+      tags:
+        - auth
+    parameters: []
+  /auth/password/reset/:
+    post:
+      operationId: auth_password_reset_create
+      description: |-
+        Accepts the following POST parameters: email
+        Returns the success/fail message.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PasswordReset'
+      responses:
+        '201':
+          description: 'Password reseted successfully'
+          schema:
+            $ref: '#/definitions/PasswordReset'
+      tags:
+        - auth
+    parameters: []
+  /auth/password/reset/confirm/:
+    post:
+      operationId: auth_password_reset_confirm_create
+      description: |-
+        Accepts the following POST parameters: token, uid,
+            new_password1, new_password2
+        Returns the success/fail message.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PasswordResetConfirm'
+      responses:
+        '201':
+          description: 'Password confirmed successfully.'
+          schema:
+            $ref: '#/definitions/PasswordResetConfirm'
+      tags:
+        - auth
+    parameters: []
+  /auth/registration/:
+    post:
+      operationId: auth_registration_create
+      description: 'Creating user record'
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Register'
+      responses:
+        '201':
+          description: 'Record created successfully'
+          schema:
+            $ref: '#/definitions/Register'
+      tags:
+        - auth
+    parameters: []
+  /auth/registration/resend-email/:
+    post:
+      operationId: auth_registration_resend-email_create
+      description: 'Resending email to the user'
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ResendEmailVerification'
+      responses:
+        '201':
+          description: 'Email sent successfully'
+          schema:
+            $ref: '#/definitions/ResendEmailVerification'
+      tags:
+        - auth
+    parameters: []
+  /auth/registration/verify-email/:
+    post:
+      operationId: auth_registration_verify-email_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/VerifyEmail'
+      responses:
+        '201':
+          description: 'Email verified successfully'
+          schema:
+            $ref: '#/definitions/VerifyEmail'
+      tags:
+        - auth
+    parameters: []
+  /auth/user/:
+    get:
+      operationId: auth_user_read
+      description: |-
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      parameters: []
+      responses:
+        '200':
+          description: 'User read successfully'
+          schema:
+            $ref: '#/definitions/UserDetails'
+      tags:
+        - auth
+    put:
+      operationId: auth_user_update
+      description: |-
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserDetails'
+      responses:
+        '200':
+          description: 'User updated successfully'
+          schema:
+            $ref: '#/definitions/UserDetails'
+      tags:
+        - auth
+    patch:
+      operationId: auth_user_partial_update
+      description: |-
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserDetails'
+      responses:
+        '200':
+          description: 'User updated successfully'
+          schema:
+            $ref: '#/definitions/UserDetails'
+      tags:
+        - auth
+    parameters: []
+  /vagas/:
+    get:
+      operationId: vagas_list
+      description: |-
+        Default accepted fields: latitude, longitude, radius
+
+        Returns VagasModel fields.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/VagasDetails'
+      responses:
+        '200':
+          description: 'List of vacancies returned'
+          schema:
+            $ref: '#/definitions/VagasDetails'
+      tags:
+        - vagas
+    parameters: []
+definitions:
+  Login:
+    required:
+      - password
+    type: object
+    properties:
+      username:
+        title: Username
+        type: string
+      email:
+        title: Email
+        type: string
+        format: email
+      password:
+        title: Password
+        type: string
+        minLength: 1
+  PasswordChange:
+    required:
+      - new_password1
+      - new_password2
+    type: object
+    properties:
+      new_password1:
+        title: New password1
+        type: string
+        maxLength: 128
+        minLength: 1
+      new_password2:
+        title: New password2
+        type: string
+        maxLength: 128
+        minLength: 1
+  PasswordReset:
+    required:
+      - email
+    type: object
+    properties:
+      email:
+        title: Email
+        type: string
+        format: email
+        minLength: 1
+  PasswordResetConfirm:
+    required:
+      - new_password1
+      - new_password2
+      - uid
+      - token
+    type: object
+    properties:
+      new_password1:
+        title: New password1
+        type: string
+        maxLength: 128
+        minLength: 1
+      new_password2:
+        title: New password2
+        type: string
+        maxLength: 128
+        minLength: 1
+      uid:
+        title: Uid
+        type: string
+        minLength: 1
+      token:
+        title: Token
+        type: string
+        minLength: 1
+  Register:
+    required:
+      - username
+      - password1
+      - password2
+    type: object
+    properties:
+      username:
+        title: Username
+        type: string
+        maxLength: 150
+        minLength: 1
+      email:
+        title: Email
+        type: string
+        format: email
+        minLength: 1
+      password1:
+        title: Password1
+        type: string
+        minLength: 1
+      password2:
+        title: Password2
+        type: string
+        minLength: 1
+  ResendEmailVerification:
+    type: object
+    properties:
+      email:
+        title: Email
+        type: string
+        format: email
+        minLength: 1
+  VerifyEmail:
+    required:
+      - key
+    type: object
+    properties:
+      key:
+        title: Key
+        type: string
+        minLength: 1
+  UserDetails:
+    required:
+      - username
+    type: object
+    properties:
+      pk:
+        title: ID
+        type: integer
+        readOnly: true
+      username:
+        title: Username
+        description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+        type: string
+        pattern: ^[\w.@+-]+$
+        maxLength: 150
+        minLength: 1
+      email:
+        title: Email address
+        type: string
+        format: email
+        readOnly: true
+        minLength: 1
+      first_name:
+        title: First name
+        type: string
+        maxLength: 150
+      last_name:
+        title: Last name
+        type: string
+        maxLength: 150
+  VagasDetails:
+    required:
+      - latitude, longitude
+    type: object
+    properties:
+      pk:
+        title: id
+        type: integer
+        readOnly: true
+      geometry:
+        title: geometry
+        description: returns geometry
+        type: string
+        pattern: ^[\w.@+-]+$
+        maxLength: 150
+        minLength: 1
+      endereco:
+        title: endereco
+        type: string
+        minLength: 1
+      complemento:
+        title: complemento
+        type: string
+        maxLength: 150
