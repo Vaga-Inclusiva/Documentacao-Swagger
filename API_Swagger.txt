@@ -2,13 +2,9 @@ swagger: '2.0'
 info:
   title: VagaInclusiva-API
   description: API da aplicação VagaInclusiva
-  termsOfService: https://www.example.com/terms/
-  contact:
-    email: contact@example.com
   license:
     name: MIT License
   version: v1
-host: 127.0.0.1:8000
 schemes:
   - http
 basePath: /
@@ -41,35 +37,67 @@ paths:
             $ref: '#/definitions/Login'
       responses:
         '201':
-          description: 'User created successfully'
+          description: ''
           schema:
             $ref: '#/definitions/Login'
       tags:
         - auth
     parameters: []
-  /auth/logout/:
+  /auth/login/login/:
+    post:
+      operationId: auth_login_login_create
+      description: |-
+        Check the credentials and return the REST Token
+        if the credentials are valid and authenticated.
+        Calls Django Auth login method to register User ID
+        in Django session framework
+
+        Accept the following POST parameters: username, password
+        Return the REST Framework Token Object's key.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Login'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Login'
+      tags:
+        - auth
+    parameters: []
+  /auth/login/logout/:
     get:
-      operationId: auth_logout_list
+      operationId: auth_login_logout_list
+      summary: |-
+        Calls Django logout method and delete the Token object
+        assigned to the current User object.
       description: Accepts/Returns nothing.
       parameters: []
       responses:
         '200':
-          description: 'User logged out successfully'
+          description: ''
       tags:
         - auth
     post:
-      operationId: auth_logout_create
+      operationId: auth_login_logout_create
+      summary: |-
+        Calls Django logout method and delete the Token object
+        assigned to the current User object.
       description: Accepts/Returns nothing.
       parameters: []
       responses:
         '201':
-          description: 'User logged out successfully'
+          description: ''
       tags:
         - auth
     parameters: []
-  /auth/password/change/:
+  /auth/login/password/change/:
     post:
-      operationId: auth_password_change_create
+      operationId: auth_login_password_change_create
+      summary: Calls Django Auth SetPasswordForm save method.
       description: |-
         Accepts the following POST parameters: new_password1, new_password2
         Returns the success/fail message.
@@ -81,15 +109,16 @@ paths:
             $ref: '#/definitions/PasswordChange'
       responses:
         '201':
-          description: 'Password changed successfully'
+          description: ''
           schema:
             $ref: '#/definitions/PasswordChange'
       tags:
         - auth
     parameters: []
-  /auth/password/reset/:
+  /auth/login/password/reset/:
     post:
-      operationId: auth_password_reset_create
+      operationId: auth_login_password_reset_create
+      summary: Calls Django Auth PasswordResetForm save method.
       description: |-
         Accepts the following POST parameters: email
         Returns the success/fail message.
@@ -101,15 +130,18 @@ paths:
             $ref: '#/definitions/PasswordReset'
       responses:
         '201':
-          description: 'Password reseted successfully'
+          description: ''
           schema:
             $ref: '#/definitions/PasswordReset'
       tags:
         - auth
     parameters: []
-  /auth/password/reset/confirm/:
+  /auth/login/password/reset/confirm/:
     post:
-      operationId: auth_password_reset_confirm_create
+      operationId: auth_login_password_reset_confirm_create
+      summary: |-
+        Password reset e-mail link is confirmed, therefore
+        this resets the user's password.
       description: |-
         Accepts the following POST parameters: token, uid,
             new_password1, new_password2
@@ -122,69 +154,18 @@ paths:
             $ref: '#/definitions/PasswordResetConfirm'
       responses:
         '201':
-          description: 'Password confirmed successfully.'
+          description: ''
           schema:
             $ref: '#/definitions/PasswordResetConfirm'
       tags:
         - auth
     parameters: []
-  /auth/registration/:
-    post:
-      operationId: auth_registration_create
-      description: 'Creating user record'
-      parameters:
-        - name: data
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/Register'
-      responses:
-        '201':
-          description: 'Record created successfully'
-          schema:
-            $ref: '#/definitions/Register'
-      tags:
-        - auth
-    parameters: []
-  /auth/registration/resend-email/:
-    post:
-      operationId: auth_registration_resend-email_create
-      description: 'Resending email to the user'
-      parameters:
-        - name: data
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/ResendEmailVerification'
-      responses:
-        '201':
-          description: 'Email sent successfully'
-          schema:
-            $ref: '#/definitions/ResendEmailVerification'
-      tags:
-        - auth
-    parameters: []
-  /auth/registration/verify-email/:
-    post:
-      operationId: auth_registration_verify-email_create
-      description: ''
-      parameters:
-        - name: data
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/VerifyEmail'
-      responses:
-        '201':
-          description: 'Email verified successfully'
-          schema:
-            $ref: '#/definitions/VerifyEmail'
-      tags:
-        - auth
-    parameters: []
-  /auth/user/:
+  /auth/login/user/:
     get:
-      operationId: auth_user_read
+      operationId: auth_login_user_read
+      summary: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
       description: |-
         Default accepted fields: username, first_name, last_name
         Default display fields: pk, username, email, first_name, last_name
@@ -194,13 +175,267 @@ paths:
       parameters: []
       responses:
         '200':
-          description: 'User read successfully'
+          description: ''
+          schema:
+            $ref: '#/definitions/UserDetails'
+      tags:
+        - auth
+    put:
+      operationId: auth_login_user_update
+      summary: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+      description: |-
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserDetails'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserDetails'
+      tags:
+        - auth
+    patch:
+      operationId: auth_login_user_partial_update
+      summary: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+      description: |-
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserDetails'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/UserDetails'
+      tags:
+        - auth
+    parameters: []
+  /auth/logout/:
+    get:
+      operationId: auth_logout_list
+      summary: |-
+        Calls Django logout method and delete the Token object
+        assigned to the current User object.
+      description: Accepts/Returns nothing.
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - auth
+    post:
+      operationId: auth_logout_create
+      summary: |-
+        Calls Django logout method and delete the Token object
+        assigned to the current User object.
+      description: Accepts/Returns nothing.
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - auth
+    parameters: []
+  /auth/password/change/:
+    post:
+      operationId: auth_password_change_create
+      summary: Calls Django Auth SetPasswordForm save method.
+      description: |-
+        Accepts the following POST parameters: new_password1, new_password2
+        Returns the success/fail message.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PasswordChange'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/PasswordChange'
+      tags:
+        - auth
+    parameters: []
+  /auth/password/reset/:
+    post:
+      operationId: auth_password_reset_create
+      summary: Calls Django Auth PasswordResetForm save method.
+      description: |-
+        Accepts the following POST parameters: email
+        Returns the success/fail message.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PasswordReset'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/PasswordReset'
+      tags:
+        - auth
+    parameters: []
+  /auth/password/reset/confirm/:
+    post:
+      operationId: auth_password_reset_confirm_create
+      summary: |-
+        Password reset e-mail link is confirmed, therefore
+        this resets the user's password.
+      description: |-
+        Accepts the following POST parameters: token, uid,
+            new_password1, new_password2
+        Returns the success/fail message.
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PasswordResetConfirm'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/PasswordResetConfirm'
+      tags:
+        - auth
+    parameters: []
+  /auth/registration/:
+    get:
+      operationId: auth_registration_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+      tags:
+        - auth
+    post:
+      operationId: auth_registration_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - auth
+    parameters: []
+  /auth/registration/{id}/:
+    get:
+      operationId: auth_registration_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - auth
+    put:
+      operationId: auth_registration_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - auth
+    patch:
+      operationId: auth_registration_partial_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - auth
+    delete:
+      operationId: auth_registration_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - auth
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this user.
+        required: true
+        type: integer
+  /auth/user/:
+    get:
+      operationId: auth_user_read
+      summary: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+      description: |-
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      parameters: []
+      responses:
+        '200':
+          description: ''
           schema:
             $ref: '#/definitions/UserDetails'
       tags:
         - auth
     put:
       operationId: auth_user_update
+      summary: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
       description: |-
         Default accepted fields: username, first_name, last_name
         Default display fields: pk, username, email, first_name, last_name
@@ -215,13 +450,16 @@ paths:
             $ref: '#/definitions/UserDetails'
       responses:
         '200':
-          description: 'User updated successfully'
+          description: ''
           schema:
             $ref: '#/definitions/UserDetails'
       tags:
         - auth
     patch:
       operationId: auth_user_partial_update
+      summary: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
       description: |-
         Default accepted fields: username, first_name, last_name
         Default display fields: pk, username, email, first_name, last_name
@@ -236,30 +474,320 @@ paths:
             $ref: '#/definitions/UserDetails'
       responses:
         '200':
-          description: 'User updated successfully'
+          description: ''
           schema:
             $ref: '#/definitions/UserDetails'
       tags:
         - auth
     parameters: []
-  /vagas/:
+  /avaliacoes/:
     get:
-      operationId: vagas_list
-      description: |-
-        Default accepted fields: latitude, longitude, radius
-
-        Returns VagasModel fields.
+      operationId: avaliacoes_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Avaliacao'
+      tags:
+        - avaliacoes
+    post:
+      operationId: avaliacoes_create
+      description: ''
       parameters:
         - name: data
           in: body
           required: true
           schema:
-            $ref: '#/definitions/VagasDetails'
+            $ref: '#/definitions/Avaliacao'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Avaliacao'
+      tags:
+        - avaliacoes
+    parameters: []
+  /avaliacoes/lista/:
+    get:
+      operationId: avaliacoes_lista_list
+      description: ''
+      parameters: []
       responses:
         '200':
-          description: 'List of vacancies returned'
+          description: ''
           schema:
-            $ref: '#/definitions/VagasDetails'
+            type: array
+            items:
+              $ref: '#/definitions/Avaliacao'
+      tags:
+        - avaliacoes
+    parameters: []
+  /avaliacoes/respostas/:
+    get:
+      operationId: avaliacoes_respostas_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Resposta'
+      tags:
+        - avaliacoes
+    post:
+      operationId: avaliacoes_respostas_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Resposta'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Resposta'
+      tags:
+        - avaliacoes
+    parameters: []
+  /avaliacoes/vaga/{id_vaga}/:
+    get:
+      operationId: avaliacoes_vaga_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - avaliacoes
+    parameters:
+      - name: id_vaga
+        in: path
+        required: true
+        type: string
+  /filtro/:
+    post:
+      operationId: filtro_create
+      description: ''
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - filtro
+    parameters: []
+  /filtro/user/{user_id}/:
+    get:
+      operationId: filtro_user_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Filtro'
+      tags:
+        - filtro
+    parameters:
+      - name: user_id
+        in: path
+        required: true
+        type: string
+  /register-validation/:
+    get:
+      operationId: register-validation_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+      tags:
+        - register-validation
+    post:
+      operationId: register-validation_create
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - register-validation
+    parameters: []
+  /register-validation/{id}/:
+    get:
+      operationId: register-validation_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - register-validation
+    put:
+      operationId: register-validation_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - register-validation
+    patch:
+      operationId: register-validation_partial_update
+      description: ''
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - register-validation
+    delete:
+      operationId: register-validation_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - register-validation
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this user.
+        required: true
+        type: integer
+  /users/:
+    get:
+      operationId: users_list
+      description: Viewset do Usuário
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/User'
+      tags:
+        - users
+    post:
+      operationId: users_create
+      description: Viewset do Usuário
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - users
+    parameters: []
+  /users/{id}/:
+    get:
+      operationId: users_read
+      description: Viewset do Usuário
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - users
+    put:
+      operationId: users_update
+      description: Viewset do Usuário
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - users
+    patch:
+      operationId: users_partial_update
+      description: Viewset do Usuário
+      parameters:
+        - name: data
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+        - users
+    delete:
+      operationId: users_delete
+      description: Viewset do Usuário
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+        - users
+    parameters:
+      - name: id
+        in: path
+        description: A unique integer value identifying this user.
+        required: true
+        type: integer
+  /vagas/:
+    get:
+      operationId: vagas_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
       tags:
         - vagas
     parameters: []
@@ -332,48 +860,6 @@ definitions:
         title: Token
         type: string
         minLength: 1
-  Register:
-    required:
-      - username
-      - password1
-      - password2
-    type: object
-    properties:
-      username:
-        title: Username
-        type: string
-        maxLength: 150
-        minLength: 1
-      email:
-        title: Email
-        type: string
-        format: email
-        minLength: 1
-      password1:
-        title: Password1
-        type: string
-        minLength: 1
-      password2:
-        title: Password2
-        type: string
-        minLength: 1
-  ResendEmailVerification:
-    type: object
-    properties:
-      email:
-        title: Email
-        type: string
-        format: email
-        minLength: 1
-  VerifyEmail:
-    required:
-      - key
-    type: object
-    properties:
-      key:
-        title: Key
-        type: string
-        minLength: 1
   UserDetails:
     required:
       - username
@@ -391,7 +877,7 @@ definitions:
         maxLength: 150
         minLength: 1
       email:
-        title: Email address
+        title: Email
         type: string
         format: email
         readOnly: true
@@ -404,27 +890,103 @@ definitions:
         title: Last name
         type: string
         maxLength: 150
-  VagasDetails:
+  User:
     required:
-      - latitude, longitude
+      - username
+      - email
+      - password
     type: object
     properties:
-      pk:
-        title: id
+      id:
+        title: ID
         type: integer
         readOnly: true
-      geometry:
-        title: geometry
-        description: returns geometry
-        type: string
-        pattern: ^[\w.@+-]+$
-        maxLength: 150
-        minLength: 1
-      endereco:
-        title: endereco
+      username:
+        title: Username
         type: string
         minLength: 1
-      complemento:
-        title: complemento
+      email:
+        title: Email
         type: string
-        maxLength: 150
+        format: email
+        minLength: 1
+      password:
+        title: Password
+        type: string
+        maxLength: 128
+        minLength: 1
+  Avaliacao:
+    required:
+      - comentario
+      - nota
+      - vaga
+      - user
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      data:
+        title: Data
+        type: string
+        format: date-time
+        readOnly: true
+      comentario:
+        title: Comentario
+        type: string
+        minLength: 1
+      nota:
+        title: Nota
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      respostas:
+        title: Respostas
+        type: integer
+        maximum: 2147483647
+        minimum: -2147483648
+      vaga:
+        title: Vaga
+        type: integer
+      user:
+        title: User
+        type: integer
+  Resposta:
+    required:
+      - comentario
+      - user
+      - avaliacao
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      comentario:
+        title: Comentario
+        type: string
+        minLength: 1
+      user:
+        title: User
+        type: integer
+      avaliacao:
+        title: Avaliacao
+        type: integer
+  Filtro:
+    required:
+      - nome
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      nome:
+        title: Nome
+        type: string
+        minLength: 1
+      acess:
+        title: Acess
+        type: string
+        readOnly: true
