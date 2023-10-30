@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
-  title: Vaga Inclusiva API Documentation
-  description: API Documentation
+  title: VagaInclusiva-API
+  description: API da aplicação VagaInclusiva
   license:
     name: MIT License
   version: v1
