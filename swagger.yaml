@@ -1,11 +1,10 @@
 swagger: '2.0'
 info:
-  title: API Documentation
+  title: Vaga Inclusiva API Documentation
   description: API Documentation
   license:
     name: MIT License
   version: v1
-host: 127.0.0.1:8000
 schemes:
   - http
 basePath: /
